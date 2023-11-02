@@ -1,15 +1,12 @@
-library(ggplot2)
-library(gridExtra)
+library(ggplot2);
+library(gridExtra);
+library(dplyr);
+
+source('generate_data.R');
 
 ### Creating ice cream data
-set.seed(1)
-ice.cream <- data.frame(
-  Ice_Cream_Scoops = jitter(seq(from = 0, to = 4, by = .15), factor = 30),
-  Happiness = jitter(seq(from = 0, to = 10, by = 0.3703704), factor = 20),
-  Lactose_Intolerant = rep("No", 27)
-)
-ice.cream$Lactose_Intolerant[5:10] <- "Yes"
-lactose <- 5:10
+set.seed(2);
+ice.cream <- generate_ice_cream_data(50);
 
 ### Without Interaction Term
 lm.all <- lm(Happiness ~ Ice_Cream_Scoops, data = ice.cream)
@@ -24,8 +21,8 @@ p.1 + geom_abline(intercept = lm.all$coefficients[1], slope = lm.all$coefficient
 
 
 ### Two Separate fits
-lm.no <- lm(Happiness ~ Ice_Cream_Scoops, data = ice.cream[-lactose, ])
-lm.yes <- lm(Happiness ~ Ice_Cream_Scoops, data = ice.cream[lactose, ])
+lm.no <- lm(Happiness ~ Ice_Cream_Scoops, data = ice.cream |> filter(Lactose_Intolerant));
+lm.yes <- lm(Happiness ~ Ice_Cream_Scoops, data = ice.cream |> filter(!Lactose_Intolerant));
 
 p.2 <- ggplot(ice.cream, aes(x = Ice_Cream_Scoops, y = Happiness, col = Lactose_Intolerant)) +
   geom_point(size = 2) +
