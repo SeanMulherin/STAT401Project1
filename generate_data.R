@@ -14,7 +14,7 @@ generate_ice_cream_data <- function(
     interaction_effect_size = -(scoop_effect_size * interaction_effect_proportion);
 
     happiness <- (
-        (scoop_effect_size * scoops) + (interaction_effect_size * scoops * lactose) + -(3 * lactose) + (gender * -10)
+        (scoop_effect_size * scoops) + (interaction_effect_size * scoops * lactose) + -(3 * lactose)
     ) |>
         jitter(factor = 30) |> 
         sapply(function(x) max(0, min(x, 100))) |>
@@ -29,3 +29,7 @@ generate_ice_cream_data <- function(
 
     return(ice_cream);
 }
+
+ice_cream <- generate_ice_cream_data(50);
+plot(Happiness ~ Ice_Cream_Scoops, ice_cream);
+summary(lm(Happiness ~ Ice_Cream_Scoops + Lactose_Intolerant * Ice_Cream_Scoops, ice_cream));
